@@ -20,7 +20,42 @@ struct MyStringHash {
     HASH_INDEX_T operator()(const std::string& k) const
     {
         // Add your code here
+      int currIndex = 4;
+      int len = k.length();
+      int base = 36;
+      unsigned long long w[5] = {0, 0, 0, 0, 0};
 
+      for(int i = len; i > 0 && currIndex >= 0; i -= 6){
+        unsigned long long chunktotal = 0;
+        unsigned long long s = 1;
+
+        int startofchunk = i - 6;
+        if(startofchunk < 0){
+          startofchunk = 0;
+        }
+
+        for(int j = i - 1; j >= startofchunk; j--){
+          HASH_INDEX_T number;
+
+          if(std::isdigit(k[j])){
+            number = letterDigitToNumber(k[j]);
+          } else {
+            number = letterDigitToNumber(k[j]);
+          }
+
+          chunktotal += number*s;
+          s = s * base;
+        }
+        w[currIndex] = chunktotal;
+        currIndex--;
+      }
+      
+      unsigned long long finalResult = 0;
+      for(int i = 0; i < 5; i++){
+        finalResult += w[i] * rValues[i];
+      }
+
+      return finalResult;
 
     }
 
@@ -28,6 +63,13 @@ struct MyStringHash {
     HASH_INDEX_T letterDigitToNumber(char letter) const
     {
         // Add code here or delete this helper function if you do not want it
+
+      if(std::isdigit(letter) == true){
+        return letter - '0' + 26;
+      } else {
+        letter = std::tolower(letter);
+        return letter - 'a';
+      }
 
     }
 
